@@ -1,0 +1,95 @@
+.home {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.home-header h1 {
+  color: var(--dark);
+  font-size: 2.5rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.home-header h1::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background-color: var(--primary);
+  border-radius: 2px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.create-btn,
+.reset-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.book-lists-container {
+  min-height: 300px;
+}
+
+.book-lists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+.no-lists {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  text-align: center;
+  color: #888;
+  font-size: 1.2rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.5s ease;
+}
+
+.no-lists p:first-child {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

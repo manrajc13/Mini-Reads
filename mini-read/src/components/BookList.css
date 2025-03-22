@@ -1,0 +1,144 @@
+.book-list {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.book-list:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.book-list::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: var(--primary);
+}
+
+.book-list-content {
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.book-list-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.book-list-icon {
+  color: var(--primary);
+  width: 24px;
+  height: 24px;
+}
+
+.book-list h3 {
+  color: var(--dark);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.book-list-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.book-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.book-list p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.book-list:hover h3 {
+  color: var(--primary);
+}
+
+.book-list-preview {
+  display: flex;
+  align-items: center;
+}
+
+.book-preview-item {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: -10px;
+  border: 2px solid white;
+}
+
+.book-preview-item:first-child {
+  margin-left: 0;
+}
+
+.book-preview-more {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-left: -10px;
+  border: 2px solid white;
+}
+
+.delete-list-btn {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  background-color: rgba(231, 111, 81, 0.1);
+}
+
+.book-list:hover .delete-list-btn {
+  opacity: 1;
+}
+
+.delete-list-btn:hover {
+  background-color: var(--danger);
+  transform: scale(1.1);
+}
+
+.delete-list-btn:hover .delete-icon {
+  color: white;
+}
+
+.delete-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--danger);
+}
+
