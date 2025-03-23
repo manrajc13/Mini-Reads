@@ -197,7 +197,7 @@ const BookListDetail = ({ bookList, onClose }) => {
             <div className="recommendations-section">
               <button 
                 className="btn-secondary get-recommendations-btn" 
-                onClick={simulateApiCall} // Using simulateApiCall for demo
+                onClick={getRecommendations} // Using simulateApiCall for demo
               >
                 <BookOpen className="btn-icon" />
                 Get Recommendations

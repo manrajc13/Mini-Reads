@@ -73,23 +73,29 @@ export const BookListProvider = ({ children }) => {
   // Add a book to a list
   const addBook = (listId, bookName) => {
     const updatedBookLists = bookLists.map((list) => {
-      if (list.id === listId) {
-        return {
-          ...list,
-          books: [...list.books, { id: Date.now(), name: bookName, isEditing: false }],
-        }
-      }
-      return list
-    })
+        if (list.id === listId) {
+            // Check if the book already exists in the list
+            const bookExists = list.books.some((book) => book.name === bookName);
 
-    setBookLists(updatedBookLists)
+            if (!bookExists) {
+                return {
+                    ...list,
+                    books: [...list.books, { id: Date.now(), name: bookName, isEditing: false }],
+                };
+            }
+        }
+        return list;
+    });
+
+    setBookLists(updatedBookLists);
 
     // Update selectedBookList if it's the one being modified
     if (selectedBookList && selectedBookList.id === listId) {
-      const updatedList = updatedBookLists.find((list) => list.id === listId)
-      setSelectedBookList(updatedList)
+        const updatedList = updatedBookLists.find((list) => list.id === listId);
+        setSelectedBookList(updatedList);
     }
-  }
+};
+
 
   // Delete a book from a list
   const deleteBook = (listId, bookId) => {
