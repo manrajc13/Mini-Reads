@@ -9,7 +9,7 @@ from rapidfuzz import process
 class SearchBook:
 
     def __init__(self):
-        self.book_df = pd.read_csv('C:\\Users\\Lenovo\\OneDrive\\Desktop\\Mini-Reads3\\macro-reads\\recommendation\\Book_recommender_df.csv')
+        self.book_df = pd.read_csv('C:\\Users\\kaavy\\OneDrive\\Desktop\\Mini-Reads\\Book_recommender_df.csv')
 
     def search_by_title(self, query):
         matches = [match[0] for match in process.extract(query, self.book_df['title'], limit = 30)]

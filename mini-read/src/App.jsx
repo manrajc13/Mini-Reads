@@ -1,10 +1,12 @@
 import { BookListProvider } from "../src/context/BookListContext"
 import Home from "../src/components/Home"
 import Navbar from "../src/components/Navbar"
+import BookDetails from "../src/components/BookDetails"
 import "./App.css"
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/clerk-react"
 import { Book, ArrowRight, UserPlus } from 'lucide-react'
 import { useState, useEffect } from "react"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 function App() {
   const [isVisible, setIsVisible] = useState(false)
@@ -72,8 +74,13 @@ function App() {
 
       <SignedIn>
         <BookListProvider>
-          <Navbar />
-          <Home />
+          <Router>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/book/:title" element={<BookDetails />} />
+            </Routes>
+          </Router>
         </BookListProvider>
       </SignedIn>
     </div>

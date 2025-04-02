@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useContext } from "react"
 import { Book, BookOpen, Library, Search, Loader, Plus } from "lucide-react"
 import { UserButton } from "@clerk/clerk-react"
 import { BookListContext } from "../context/BookListContext"
+import { useNavigate } from "react-router-dom"
 import AddToBookListModal from "./AddToBookListModal"
 import "./Navbar.css"
 
@@ -17,6 +18,7 @@ const Navbar = () => {
   const [selectedBook, setSelectedBook] = useState(null)
   const searchRef = useRef(null)
   const { bookLists } = useContext(BookListContext)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,32 +65,19 @@ const Navbar = () => {
     setShowResults(true)
 
     try {
-      // Mock API call with timeout
-      // In a real app, replace this with actual fetch call to localhost:8000/search
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Send the query to backend in the specified format
+      const response = await fetch("http://127.0.0.1:5000/search_books", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: searchQuery,
+        }),
+      })
 
-      // Mock response data
-      const mockResults = [
-        {
-          author: "Isabel Allende",
-          description:
-            "9780060924980 Selling more than 65,000 copies and topping bestseller lists around the world -- including Spain, Germany, Italy, and Latin America -- this novel tells the engrossing story of one man's quest for love and for his soul.",
-          title: "The Infinite Plan A Novel",
-        },
-        {
-          author: "Gabriel García Márquez",
-          description:
-            "A tale of magic, love, and solitude spanning a hundred years in the life of the Buendía family.",
-          title: "One Hundred Years of Solitude",
-        },
-        {
-          author: "Haruki Murakami",
-          description: "A young man's journey through a parallel universe in search of a mysterious sheep.",
-          title: "A Wild Sheep Chase",
-        },
-      ]
-
-      setSearchResults(mockResults)
+      const data = await response.json()
+      setSearchResults(data.search_results || [])
     } catch (error) {
       console.error("Search error:", error)
       setSearchResults([])
@@ -103,6 +92,12 @@ const Navbar = () => {
 
   const closeAddToListModal = () => {
     setSelectedBook(null)
+  }
+
+  const handleBookClick = (book) => {
+    // Navigate to book details page with the book title
+    navigate(`/book/${encodeURIComponent(book.title)}`)
+    setShowResults(false)
   }
 
   const toggleDarkMode = () => {
@@ -138,13 +133,18 @@ const Navbar = () => {
               ) : searchResults.length > 0 ? (
                 <div className="search-results-list">
                   {searchResults.map((result, index) => (
-                    <div key={index} className="search-result-item">
+                    <div key={index} className="search-result-item" onClick={() => handleBookClick(result)}>
                       <div className="result-content">
                         <h4>{result.title}</h4>
                         <p className="result-author">by {result.author}</p>
-                        <p className="result-description">{result.description}</p>
                       </div>
-                      <button className="btn-primary add-recommendation-btn" onClick={() => handleAddBook(result)}>
+                      <button
+                        className="btn-primary add-recommendation-btn"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleAddBook(result)
+                        }}
+                      >
                         <Plus className="btn-icon" />
                         Add
                       </button>
