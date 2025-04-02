@@ -56,8 +56,14 @@ export const BookListProvider = ({ children }) => {
       title,
       books: [],
     }
-    setBookLists([...bookLists, newBookList])
+  
+    setBookLists((prevBookLists) => [...prevBookLists, newBookList]) // Use functional state update
+  
+    return newBookList.id // Return the new list's ID
   }
+  
+  
+  
 
   // Delete a book list
   const deleteBookList = (listId) => {
