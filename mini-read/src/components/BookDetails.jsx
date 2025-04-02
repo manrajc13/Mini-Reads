@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { BookListContext } from "../context/BookListContext";
-import { ArrowLeft, Star, Plus, Loader } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Loader, StarHalf } from 'lucide-react';
 import AddToBookListModal from "./AddToBookListModal";
 import "./BookDetails.css";
 
@@ -74,6 +74,28 @@ const BookDetails = () => {
     }
   };
 
+  // Render star rating based on the book's rating
+  const renderStarRating = (rating) => {
+    if (!rating) return null;
+    
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    return (
+      <div className="star-rating">
+        {[...Array(fullStars)].map((_, i) => (
+          <Star key={`full-${i}`} className="star-icon filled" />
+        ))}
+        {hasHalfStar && <StarHalf className="star-icon filled" />}
+        {[...Array(emptyStars)].map((_, i) => (
+          <Star key={`empty-${i}`} className="star-icon empty" />
+        ))}
+        <span className="rating-number">{rating.toFixed(1)}</span>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="book-details-loading">
@@ -116,15 +138,16 @@ const BookDetails = () => {
       </button>
 
       <div className="book-details-content">
-        <div className="book-cover-container">
-          <img
-            src={bookInfo.coverImg || "/placeholder.svg?height=400&width=300"}
-            alt={`Cover of ${bookInfo.title}`}
-            className="book-cover"
-          />
-          <div className="book-rating">
-            <Star className="star-icon filled" />
-            <span>{bookInfo.rating ? bookInfo.rating.toFixed(1) : "N/A"}</span>
+        <div className="book-cover-section">
+          <div className="book-cover-container">
+            <img
+              src={bookInfo.coverImg || "/placeholder.svg?height=400&width=300"}
+              alt={`Cover of ${bookInfo.title}`}
+              className="book-cover"
+            />
+          </div>
+          <div className="book-rating-container">
+            {renderStarRating(bookInfo.rating)}
           </div>
         </div>
 
