@@ -7,7 +7,7 @@ import random
 class SearchBook:
 
     def __init__(self):
-        self.book_df = pd.read_csv('C:\\Users\\Lenovo\\OneDrive\\Desktop\\Mini-Reads3\\macro-reads\\Mini-Reads\\recommendation\\recommender_df.csv')
+        self.book_df = pd.read_csv('C:\\Users\\kaavy\\OneDrive\\Desktop\\Mini-Reads\\recommendation\\recommender_df.csv')
         self.generic_df = self.book_df.sort_values(by = 'weighted_rating', ascending = False).head(1000)
 
     def search_by_title(self, query):

@@ -24,7 +24,7 @@ os.environ['HF_TOKEN'] = os.getenv('HF_TOKEN')
 
 class BookRecommendation:
     def __init__(self):
-        self.recommender_df = pd.read_csv('C:\\Users\\Lenovo\\OneDrive\\Desktop\\Mini-Reads3\\macro-reads\\Mini-Reads\\recommendation\\recommender_df.csv')
+        self.recommender_df = pd.read_csv('C:\\Users\\kaavy\\OneDrive\\Desktop\\Mini-Reads\\recommendation\\recommender_df.csv')
         # self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
         self.vector_db = self.initialize_vector_db()
         llm = ChatGroq(model = 'llama-3.3-70b-versatile', groq_api_key = os.getenv("GROQ_API_KEY"))

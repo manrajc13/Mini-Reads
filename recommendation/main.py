@@ -22,7 +22,7 @@ def search_books():
         elif (criteria == 'author'):
             result = search_book.search_by_author(search_query)
         else:
-            result = search_book.search_by_genre(search_query)
+            result = search_book.search_by_genre(criteria)
         return jsonify({'search_results': result})
     else:
         return jsonify({"message":"Please use a POST method"})

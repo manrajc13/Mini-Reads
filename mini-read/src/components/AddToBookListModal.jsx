@@ -23,26 +23,17 @@ const AddToBookListModal = ({ book, onClose }) => {
     }
   }, [onClose])
 
-  const handleCreateAndAdd = (e) => {
-    e.preventDefault();
+  const handleCreateAndAdd = async (e) => {
+    e.preventDefault()
     if (newListName.trim()) {
-        const listId = createBookList(newListName); // Get the new list's ID
+      const listId = await createBookList(newListName) // Get the new list's ID
 
-        setBookLists(prev => {
-            return prev.map(list => 
-                list.id === listId 
-                    ? { ...list, books: [...list.books, { id: Date.now(), name: `${book.title} by ${book.author}` }] }
-                    : list
-            );
-        });
-
-        onClose();
+      if (listId) {
+        await addBook(listId, `${book.title} by ${book.author}`)
+        onClose()
+      }
     }
-};
-
-
-  
-  
+  }
 
   const handleAddToExistingList = (listId) => {
     addBook(listId, `${book.title} by ${book.author}`)
@@ -111,4 +102,3 @@ const AddToBookListModal = ({ book, onClose }) => {
 }
 
 export default AddToBookListModal
-
