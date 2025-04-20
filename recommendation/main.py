@@ -16,7 +16,13 @@ def search_books():
     if request.method == 'POST':
         data = request.get_json()
         search_query = data['query']
-        result = search_book.search_by_title(search_query)
+        criteria = data.get('criteria', 'title')  # Default to 'title' if not provided
+        if (criteria == 'title'):
+            result = search_book.search_by_title(search_query)
+        elif (criteria == 'author'):
+            result = search_book.search_by_author(search_query)
+        else:
+            result = search_book.search_by_genre(search_query)
         return jsonify({'search_results': result})
     else:
         return jsonify({"message":"Please use a POST method"})
@@ -32,6 +38,17 @@ def get_book_info():
     
     else:
         return jsonify({"message":"Please use a POST method"})
+    
+
+@app.route('/generalized_recommendations', methods = ['POST','GET'])
+def generalized_recommendations():
+    if request.method == 'POST':
+        data = request.get_json()
+        genres = data.get('genres')
+        result = search_book.general_recommendations(genres)
+        return jsonify({'recommendations': result})
+    else:
+        return jsonify({'message': 'Please use POST method'})
     
 
 @app.route('/recommend_books', methods = ['POST','GET'])

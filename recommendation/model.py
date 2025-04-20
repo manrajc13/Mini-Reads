@@ -24,7 +24,7 @@ os.environ['HF_TOKEN'] = os.getenv('HF_TOKEN')
 
 class BookRecommendation:
     def __init__(self):
-        self.recommender_df = pd.read_csv('C:\\Users\\kaavy\\OneDrive\\Desktop\\Mini-Reads\\Book_recommender_df.csv')
+        self.recommender_df = pd.read_csv('C:\\Users\\Lenovo\\OneDrive\\Desktop\\Mini-Reads3\\macro-reads\\Mini-Reads\\recommendation\\recommender_df.csv')
         # self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
         self.vector_db = self.initialize_vector_db()
         llm = ChatGroq(model = 'llama-3.3-70b-versatile', groq_api_key = os.getenv("GROQ_API_KEY"))
@@ -98,11 +98,16 @@ class BookRecommendation:
             book_ids.append(result[i][0].id)
         recommendations = []
         for id in book_ids:
+            matching_books = self.recommender_df[self.recommender_df['bookId'] == id]
+
+            if matching_books.empty:
+                continue 
+
             recommendations.append({
-                'title' : self.recommender_df[self.recommender_df['bookId'] == id]['title'].values[0],
-                'author' : self.recommender_df[self.recommender_df['bookId'] == id]['author'].values[0],
-                'description' : self.recommender_df[self.recommender_df['bookId'] == id]['description'].values[0],
-                'ratings' : self.recommender_df[self.recommender_df['bookId'] == id]['numRatings'].values[0]
+                'title': matching_books['title'].values[0],
+                'author': matching_books['author'].values[0],
+                'description': matching_books['description'].values[0],
+                'ratings': matching_books['numRatings'].values[0]
             })
         recommendations = sorted(recommendations, key = lambda x : x['ratings'], reverse = True)
         return recommendations[:5] 
