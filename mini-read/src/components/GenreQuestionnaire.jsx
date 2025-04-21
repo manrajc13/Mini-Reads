@@ -5,7 +5,7 @@ import { Check, BookOpen } from "lucide-react"
 import axios from "axios"
 import "./GenreQuestionnaire.css"
 
-const API_BASE_URL = "http://localhost:6000/api"
+const API_BASE_URL = "http://localhost:5000/api"
 
 const GenreQuestionnaire = ({ userId, onComplete }) => {
   const [selectedGenres, setSelectedGenres] = useState([])

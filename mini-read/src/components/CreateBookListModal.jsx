@@ -2,8 +2,8 @@
 
 import { useState, useContext, useRef, useEffect } from "react"
 import { BookListContext } from "../context/BookListContext"
-import { X, BookPlus } from "lucide-react"
-import "./Modal.css"
+import { X, BookPlus } from 'lucide-react'
+import "./modal.css"
 
 const CreateBookListModal = ({ onClose }) => {
   const [title, setTitle] = useState("")
@@ -68,4 +68,3 @@ const CreateBookListModal = ({ onClose }) => {
 }
 
 export default CreateBookListModal
-

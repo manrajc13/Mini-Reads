@@ -12,6 +12,7 @@ import { Book, ArrowRight, UserPlus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import axios from "axios"
+import LandingPage from "./components/landing-page"
 
 const API_BASE_URL = "http://localhost:5000/api"
 
@@ -132,6 +133,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/book/:title" element={<BookDetails />} />
               <Route path="/discover" element={<Discover />} />
+              <Route path="/landing" element={<LandingPage/>} />
             </Routes>
           </Router>
         </BookListProvider>

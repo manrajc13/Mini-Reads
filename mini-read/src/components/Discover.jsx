@@ -1,32 +1,38 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useAuth } from "@clerk/clerk-react"
-import { Book, Loader, BookOpen } from 'lucide-react'
+import { Book, Loader, BookOpen, Heart, Plus } from "lucide-react"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import { BookListContext } from "../context/BookListContext"
+import AddToBookListModal from "./AddToBookListModal"
 import "./Discover.css"
 
 const Discover = () => {
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedBook, setSelectedBook] = useState(null)
   const { userId } = useAuth()
+  const navigate = useNavigate()
+  const { bookLists } = useContext(BookListContext)
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       setLoading(true)
       try {
-        // First, get the user's genres from MongoDB
+        // First, get the user's genres
         const userResponse = await axios.get(`http://localhost:5000/api/users/${userId}`)
         const userGenres = userResponse.data.genres || []
-        console.log("User genres:", userGenres)
+
         if (userGenres.length === 0) {
-          setError("No genres found for the user. Please update your preferences.")
+          setError("No genres found in your profile. Please update your preferences.")
           setLoading(false)
           return
         }
 
-        // Then, make the POST request to the recommendations API
+        // Then, fetch recommendations based on genres
         const response = await fetch("http://127.0.0.1:5000/generalized_recommendations", {
           method: "POST",
           headers: {
@@ -34,7 +40,7 @@ const Discover = () => {
           },
           body: JSON.stringify({ genres: userGenres }),
         })
-        // console.log("Response from recommendations API:", response)
+
         if (!response.ok) {
           throw new Error("Failed to fetch recommendations")
         }
@@ -43,19 +49,26 @@ const Discover = () => {
         let data
         try {
           // Replace NaN with null in the response text before parsing
-          const cleanedText = text.replace(/: NaN/g, ": null")
+          const cleanedText = text.replace(/NaN/g, "null")
           data = JSON.parse(cleanedText)
         } catch (parseError) {
           console.error("Error parsing JSON:", parseError)
           throw new Error("Invalid response format from server")
         }
 
-        setRecommendations((data.recommendations || []).map(book => ({
-          ...book,
-          cover_image: book.cover_image ? 
-            `https://images.weserv.nl/?url=${encodeURIComponent(book.cover_image)}` : 
-            null
-        })))
+        setRecommendations(
+          (data.recommendations || []).map((book) => ({
+            ...book,
+            cover_image: book.coverImg
+              ? `https://images.weserv.nl/?url=${encodeURIComponent(book.coverImg)}&fit=cover&h=400`
+              : null,
+            genres: Array.isArray(book.genres)
+              ? book.genres
+              : typeof book.genres === "string"
+                ? JSON.parse(book.genres.replace(/'/g, '"'))
+                : [],
+          })),
+        )
       } catch (err) {
         console.error("Error fetching recommendations:", err)
         setError("Failed to load recommendations. Please try again later.")
@@ -64,16 +77,41 @@ const Discover = () => {
       }
     }
 
-    fetchRecommendations()
+    if (userId) {
+      fetchRecommendations()
+    }
   }, [userId])
+
+  // Same function as in Navbar.jsx
+  const handleBookClick = (book) => {
+    // Navigate to book details page with the book title
+    navigate(`/book/${encodeURIComponent(book.title)}`)
+  }
+
+  // Same function as in Navbar.jsx
+  const handleAddBook = (book) => {
+    setSelectedBook(book)
+  }
+
+  const closeAddToListModal = () => {
+    setSelectedBook(null)
+  }
 
   if (loading) {
     return (
-      <div className="discover-loading">
-        <div className="loading-container">
-          <Loader className="loading-icon" />
-          <h2>Finding books you'll love...</h2>
-          <p>Based on your preferred genres</p>
+      <div className="page-container">
+        <div className="discover-page home">
+          <header className="discover-header">
+            <h1>Discover Books</h1>
+          </header>
+
+          <div className="loading-state">
+            <div className="loading-content">
+              <Loader className="loading-icon" />
+              <h2>Finding your next favorite books...</h2>
+              <p>We're curating recommendations based on your preferences</p>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -81,81 +119,114 @@ const Discover = () => {
 
   if (error) {
     return (
-      <div className="discover-error">
-        <div className="error-container">
-          <h2>Oops! Something went wrong</h2>
-          <p>{error}</p>
-          <button className="btn-primary" onClick={() => window.location.reload()}>
-            Try Again
-          </button>
+      <div className="page-container">
+        <div className="discover-page home">
+          <header className="discover-header">
+            <h1>Discover Books</h1>
+          </header>
+
+          <div className="error-state">
+            <div className="error-content">
+              <div className="error-icon-container">
+                <BookOpen className="error-icon" />
+              </div>
+              <h2>Oops! Something went wrong</h2>
+              <p>{error}</p>
+              <button className="btn-primary" onClick={() => window.location.reload()}>
+                Try Again
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="discover">
-      <header className="discover-header">
-        <h1>Discover Books</h1>
-        <p>Personalized recommendations based on your preferences</p>
-      </header>
+    <div className="page-container">
+      <div className="discover-page home">
+        <header className="discover-header">
+          <h1>Discover Books</h1>
+        </header>
 
-      {recommendations.length === 0 ? (
-        <div className="no-recommendations">
-          <BookOpen className="no-data-icon" />
-          <h2>No recommendations found</h2>
-          <p>Try updating your genre preferences to get personalized recommendations</p>
-        </div>
-      ) : (
-        <div className="recommendations-grid">
-          {recommendations.map((book, index) => (
-            <div className="book-card" key={index}>
-              <div className="book-cover">
-                {book.cover_image ? (
-                  <img 
-                    src={book.cover_image} 
-                    alt={book.title}
-                    onError={(e) => {
-                      e.target.onerror = null; // Prevent infinite loop
-                      e.target.src = "/placeholder.svg";
-                    }}
-                  />
-                ) : (
-                  <div className="placeholder-cover">
-                    <Book className="book-icon" />
-                  </div>
-                )}
-              </div>
-              <div className="book-info">
-                <h3 className="book-title">{book.title}</h3>
-                <p className="book-author">by {book.author}</p>
-                {book.genres && (Array.isArray(book.genres) ? book.genres : String(book.genres).split(',')).length > 0 && (
-                  <div className="book-genres">
-                    {(Array.isArray(book.genres) ? book.genres : String(book.genres).split(','))
-                      .slice(0, 3)
-                      .map((genre, idx) => (
-                        <span key={idx} className="genre-tag">
-                          {genre.trim()}
+        {recommendations.length === 0 ? (
+          <div className="empty-state">
+            <BookOpen className="empty-icon" />
+            <h2>No recommendations found</h2>
+            <p>Try updating your genre preferences to get personalized book recommendations</p>
+            <button className="btn-primary">Update Preferences</button>
+          </div>
+        ) : (
+          <div className="books-grid">
+            {recommendations.map((book, index) => (
+              <div key={index} className="book-card">
+                <div className="book-cover-container">
+                  {book.cover_image ? (
+                    <img
+                      src={book.cover_image || "/placeholder.svg"}
+                      alt={`Cover of ${book.title}`}
+                      className="book-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null
+                        e.currentTarget.src = "/placeholder.svg?height=400&width=300"
+                      }}
+                    />
+                  ) : (
+                    <div className="placeholder-cover">
+                      <Book className="placeholder-icon" />
+                    </div>
+                  )}
+                  <button className="favorite-button" aria-label="Add to favorites">
+                    <Heart className="favorite-icon" />
+                  </button>
+                </div>
+
+                <div className="book-content">
+                  <h3 className="book-title">{book.title || "Unknown Title"}</h3>
+                  <p className="book-author">by {book.author || "Unknown Author"}</p>
+
+                  {book.genres && book.genres.length > 0 && (
+                    <div className="genre-tags">
+                      {(Array.isArray(book.genres) ? book.genres : [book.genres]).slice(0, 3).map((genre, idx) => (
+                        <span key={idx} className="genre-badge">
+                          {typeof genre === "string" ? genre.trim() : String(genre)}
                         </span>
                       ))}
-                  </div>
-                )}
-                <p className="book-description">
-                  {book.description
-                    ? book.description.length > 120
-                      ? `${book.description.substring(0, 120)}...`
-                      : book.description
-                    : "No description available"}
-                </p>
+                      {book.genres.length > 3 && <span className="more-genres">+{book.genres.length - 3}</span>}
+                    </div>
+                  )}
+
+                  <p className="book-description">
+                    {book.description
+                      ? book.description.length > 120
+                        ? `${book.description.substring(0, 120)}...`
+                        : book.description
+                      : "No description available for this book."}
+                  </p>
+                </div>
+
+                <div className="book-actions">
+                  <button className="btn-primary view-details-btn" onClick={() => handleBookClick(book)}>
+                    View Details
+                  </button>
+                  <button
+                    className="btn-secondary add-list-btn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleAddBook(book)
+                    }}
+                  >
+                    <Plus className="btn-icon" />
+                    Add to List
+                  </button>
+                </div>
               </div>
-              <div className="book-actions">
-                <button className="btn-primary view-details-btn">View Details</button>
-                <button className="btn-secondary add-to-list-btn">Add to List</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+
+        {selectedBook && <AddToBookListModal book={selectedBook} onClose={closeAddToListModal} />}
+      </div>
     </div>
   )
 }

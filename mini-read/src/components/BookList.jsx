@@ -1,6 +1,6 @@
 "use client"
 import { useContext } from "react"
-import { Book, Trash2 } from "lucide-react"
+import { Book, Trash2 } from 'lucide-react'
 import { BookListContext } from "../context/BookListContext"
 import "./BookList.css"
 
@@ -43,4 +43,3 @@ const BookList = ({ bookList, onClick }) => {
 }
 
 export default BookList
-

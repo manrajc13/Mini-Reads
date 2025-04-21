@@ -1,15 +1,12 @@
 "use client"
 
-import { useState, useEffect, useRef, useContext } from "react"
-import { Book, BookOpen, Library, Search, Loader, Plus, ChevronDown, Check, X } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Book, BookOpen, Library, Search, Loader, Plus, ChevronDown, Check, X, Home } from 'lucide-react'
 import { UserButton } from "@clerk/clerk-react"
-import { BookListContext } from "../context/BookListContext"
-import { useNavigate, Link, useLocation } from "react-router-dom"
-import AddToBookListModal from "./AddToBookListModal"
-import "./Navbar.css"
+import { Link, useLocation } from "react-router-dom"
+import "./navbar.css"
 
 const Navbar = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState([])
@@ -23,68 +20,23 @@ const Navbar = () => {
   const searchRef = useRef(null)
   const dropdownRef = useRef(null)
   const genreSelectorRef = useRef(null)
-  const { bookLists } = useContext(BookListContext)
-  const navigate = useNavigate()
   const location = useLocation()
 
   // List of available genres
-  const genres = ['Fiction',
-    'Romance',
-    'Fantasy',
-    'Young Adult',
-    'Contemporary',
-    'Adult',
-    'Audiobook',
-    'Novels',
-    'Mystery',
-    'Historical Fiction',
-    'Classics',
-    'Adventure',
-    'Nonfiction',
-    'Historical',
-    'Literature',
-    'Paranormal',
-    'Science Fiction',
-    'Childrens',
-    'Thriller',
-    'Magic',
-    'Humor',
-    'Crime',
-    'Suspense',
-    'Contemporary Romance',
-    'Chick Lit',
-    'Urban Fantasy',
-    'Science Fiction Fantasy',
-    'Supernatural',
-    'Mystery Thriller',
-    'Middle Grade',
-    'Adult Fiction',
-    'Teen',
-    'Paranormal Romance',
-    'History',
-    'Biography',
-    'Horror',
-    'Literary Fiction',
-    'Realistic Fiction',
-    'British Literature',
-    'Drama',
-    'Philosophy',
-    'Short Stories',
-    'New Adult',
-    'Memoir',
-    'Erotica',
-    '20th Century',
-    'Vampires',
-    'War',
-    'Religion',
-    'American',
-    'Family',
-    'Juvenile',
-    'School',
-    'Graphic Novels',
-    'Dystopia']
-   
-  
+  const genres = [
+    'Fiction', 'Romance', 'Fantasy', 'Young Adult', 'Contemporary', 
+    'Adult', 'Audiobook', 'Novels', 'Mystery', 'Historical Fiction', 
+    'Classics', 'Adventure', 'Nonfiction', 'Historical', 'Literature', 
+    'Paranormal', 'Science Fiction', 'Childrens', 'Thriller', 'Magic', 
+    'Humor', 'Crime', 'Suspense', 'Contemporary Romance', 'Chick Lit', 
+    'Urban Fantasy', 'Science Fiction Fantasy', 'Supernatural', 
+    'Mystery Thriller', 'Middle Grade', 'Adult Fiction', 'Teen', 
+    'Paranormal Romance', 'History', 'Biography', 'Horror', 
+    'Literary Fiction', 'Realistic Fiction', 'British Literature', 
+    'Drama', 'Philosophy', 'Short Stories', 'New Adult', 'Memoir', 
+    'Erotica', '20th Century', 'Vampires', 'War', 'Religion', 
+    'American', 'Family', 'Juvenile', 'School', 'Graphic Novels', 'Dystopia'
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -148,7 +100,6 @@ const Navbar = () => {
 
     try {
       // Send the query to backend in the specified format
-      
       const response = await fetch("http://127.0.0.1:5000/search_books", {
         method: "POST",
         headers: {
@@ -159,9 +110,8 @@ const Navbar = () => {
           criteria: searchCriteria === "genres" ? selectedGenres : searchCriteria,
         }),
       })
-      console.log(selectedGenres)
+      
       const data = await response.json()
-      console.log("Search results:", data)
       setSearchResults(data.search_results || [])
     } catch (error) {
       console.error("Search error:", error)
@@ -175,19 +125,10 @@ const Navbar = () => {
     setSelectedBook(book)
   }
 
-  const closeAddToListModal = () => {
-    setSelectedBook(null)
-  }
-
   const handleBookClick = (book) => {
     // Navigate to book details page with the book title
-    navigate(`/book/${encodeURIComponent(book.title)}`)
+    window.location.href = `/book/${encodeURIComponent(book.title)}`
     setShowResults(false)
-  }
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    document.body.classList.toggle("dark-mode")
   }
 
   const handleCriteriaChange = (criteria) => {
@@ -264,7 +205,7 @@ const Navbar = () => {
                   setShowDropdown(!showDropdown)
                 }}
               >
-                {getCriteriaLabel()} <ChevronDown className="dropdown-icon" />
+                {getCriteriaLabel()} <ChevronDown className={`dropdown-icon ${showDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {showDropdown && (
@@ -273,18 +214,21 @@ const Navbar = () => {
                     className={`dropdown-item ${searchCriteria === "title" ? "active" : ""}`}
                     onClick={() => handleCriteriaChange("title")}
                   >
+                    <Search size={16} />
                     Title
                   </div>
                   <div
                     className={`dropdown-item ${searchCriteria === "author" ? "active" : ""}`}
                     onClick={() => handleCriteriaChange("author")}
                   >
+                    <Search size={16} />
                     Author
                   </div>
                   <div
                     className={`dropdown-item ${searchCriteria === "genres" ? "active" : ""}`}
                     onClick={() => handleCriteriaChange("genres")}
                   >
+                    <Search size={16} />
                     Genres
                   </div>
                 </div>
@@ -366,6 +310,10 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-links">
+          <Link to="/landing" className={`home-button ${location.pathname === "/landing" ? "active" : ""}`}>
+            <Home className="home-icon" />
+            <span>Home</span>
+          </Link>
           <Link to="/" className={`navbar-link ${location.pathname === "/" ? "active" : ""}`}>
             <BookOpen className="link-icon" />
             <span>Collections</span>
@@ -384,13 +332,20 @@ const Navbar = () => {
               }}
             />
           </div>
-          {/* <button className="theme-toggle" onClick={toggleDarkMode}>
-            {isDarkMode ? <Sun className="theme-icon" /> : <Moon className="theme-icon" />}
-          </button> */}
         </div>
       </div>
 
-      {selectedBook && <AddToBookListModal book={selectedBook} onClose={closeAddToListModal} />}
+      {selectedBook && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Add to Book List</h2>
+            <button className="close-modal" onClick={() => setSelectedBook(null)}>
+              <X size={18} />
+            </button>
+            {/* Modal content would go here */}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
