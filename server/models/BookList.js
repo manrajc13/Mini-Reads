@@ -13,6 +13,14 @@ const bookSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isRead: {
+    type: Boolean,
+    default: false,
+  },
+  readTimestamp: {
+    type: Date,
+    default: null,
+  },
 })
 
 const bookListSchema = new mongoose.Schema({

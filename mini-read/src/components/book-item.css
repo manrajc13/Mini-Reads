@@ -1,0 +1,106 @@
+.book-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    background-color: #f9f9f9;
+    transition: var(--transition);
+    animation: fadeIn 0.3s ease;
+    border-left: 4px solid var(--primary);
+  }
+  
+  .book-item:hover {
+    background-color: #f0f0f0;
+    transform: translateX(5px);
+  }
+  
+  .book-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .book-name {
+    font-weight: 500;
+    color: var(--dark);
+  }
+  
+  .read-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--secondary);
+  }
+  
+  .read-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .read-date {
+    font-style: italic;
+  }
+  
+  .book-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .edit-book-form {
+    display: flex;
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .edit-book-form input {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+  
+  .edit-book-form input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+  }
+  
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .edit-btn,
+  .delete-btn,
+  .save-btn,
+  .mark-read-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .mark-read-btn {
+    background-color: #6b7280;
+  }
+  
+  .mark-read-btn:hover {
+    background-color: #4b5563;
+  }
+  
+  @media (max-width: 768px) {
+    .book-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .book-actions {
+      margin-top: 0.75rem;
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+  

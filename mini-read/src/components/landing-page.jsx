@@ -32,7 +32,7 @@ export default function LandingPage() {
               <div className="hero-image-bg"></div>
               <div className="hero-image animate-float">
                 <img
-                  src="/placeholder.svg?height=500&width=600"
+                  src="/WhatsApp Image 2025-04-26 at 01.02.58_e522ad55.jpg"
                   alt="Book collection illustration"
                 />
               </div>
@@ -199,7 +199,7 @@ export default function LandingPage() {
                 <div className="tab-image">
                   <div className="tab-image-bg"></div>
                   <img 
-                    src="/placeholder.svg?height=400&width=600" 
+                    src="/WhatsApp Image 2025-04-26 at 01.12.16_b0595e63.jpg" 
                     alt="Discover page screenshot" 
                   />
                 </div>
@@ -227,7 +227,7 @@ export default function LandingPage() {
                 <div className="tab-image">
                   <div className="tab-image-bg"></div>
                   <img 
-                    src="/placeholder.svg?height=400&width=600" 
+                    src="/image1.png" 
                     alt="Collections page screenshot" 
                   />
                 </div>
@@ -255,7 +255,7 @@ export default function LandingPage() {
                 <div className="tab-image">
                   <div className="tab-image-bg"></div>
                   <img 
-                    src="/placeholder.svg?height=400&width=600" 
+                    src="/image.png" 
                     alt="Search functionality screenshot" 
                   />
                 </div>
@@ -266,7 +266,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="testimonials-section">
+      {/* <section id="testimonials" className="testimonials-section">
         <div className="container">
           <div className="section-header">
             <h2>What Our Users Say</h2>
@@ -330,7 +330,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Stats Section */}
       <section className="stats-section">

@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Book, BookOpen, Library, Search, Loader, Plus, ChevronDown, Check, X, Home } from 'lucide-react'
+import { Book, BookOpen, Library, Search, Loader, Plus, ChevronDown, Check, X, Home, Clock } from "lucide-react"
 import { UserButton } from "@clerk/clerk-react"
 import { Link, useLocation } from "react-router-dom"
 import "./navbar.css"
+import AddToBookListModal from "./AddToBookListModal"
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -24,18 +25,61 @@ const Navbar = () => {
 
   // List of available genres
   const genres = [
-    'Fiction', 'Romance', 'Fantasy', 'Young Adult', 'Contemporary', 
-    'Adult', 'Audiobook', 'Novels', 'Mystery', 'Historical Fiction', 
-    'Classics', 'Adventure', 'Nonfiction', 'Historical', 'Literature', 
-    'Paranormal', 'Science Fiction', 'Childrens', 'Thriller', 'Magic', 
-    'Humor', 'Crime', 'Suspense', 'Contemporary Romance', 'Chick Lit', 
-    'Urban Fantasy', 'Science Fiction Fantasy', 'Supernatural', 
-    'Mystery Thriller', 'Middle Grade', 'Adult Fiction', 'Teen', 
-    'Paranormal Romance', 'History', 'Biography', 'Horror', 
-    'Literary Fiction', 'Realistic Fiction', 'British Literature', 
-    'Drama', 'Philosophy', 'Short Stories', 'New Adult', 'Memoir', 
-    'Erotica', '20th Century', 'Vampires', 'War', 'Religion', 
-    'American', 'Family', 'Juvenile', 'School', 'Graphic Novels', 'Dystopia'
+    "Fiction",
+    "Romance",
+    "Fantasy",
+    "Young Adult",
+    "Contemporary",
+    "Adult",
+    "Audiobook",
+    "Novels",
+    "Mystery",
+    "Historical Fiction",
+    "Classics",
+    "Adventure",
+    "Nonfiction",
+    "Historical",
+    "Literature",
+    "Paranormal",
+    "Science Fiction",
+    "Childrens",
+    "Thriller",
+    "Magic",
+    "Humor",
+    "Crime",
+    "Suspense",
+    "Contemporary Romance",
+    "Chick Lit",
+    "Urban Fantasy",
+    "Science Fiction Fantasy",
+    "Supernatural",
+    "Mystery Thriller",
+    "Middle Grade",
+    "Adult Fiction",
+    "Teen",
+    "Paranormal Romance",
+    "History",
+    "Biography",
+    "Horror",
+    "Literary Fiction",
+    "Realistic Fiction",
+    "British Literature",
+    "Drama",
+    "Philosophy",
+    "Short Stories",
+    "New Adult",
+    "Memoir",
+    "Erotica",
+    "20th Century",
+    "Vampires",
+    "War",
+    "Religion",
+    "American",
+    "Family",
+    "Juvenile",
+    "School",
+    "Graphic Novels",
+    "Dystopia",
   ]
 
   useEffect(() => {
@@ -110,7 +154,7 @@ const Navbar = () => {
           criteria: searchCriteria === "genres" ? selectedGenres : searchCriteria,
         }),
       })
-      
+
       const data = await response.json()
       setSearchResults(data.search_results || [])
     } catch (error) {
@@ -205,7 +249,7 @@ const Navbar = () => {
                   setShowDropdown(!showDropdown)
                 }}
               >
-                {getCriteriaLabel()} <ChevronDown className={`dropdown-icon ${showDropdown ? 'rotate-180' : ''}`} />
+                {getCriteriaLabel()} <ChevronDown className={`dropdown-icon ${showDropdown ? "rotate-180" : ""}`} />
               </button>
 
               {showDropdown && (
@@ -322,6 +366,14 @@ const Navbar = () => {
             <Book className="link-icon" />
             <span>Discover</span>
           </Link>
+          <Link
+              to="/reading-history"
+              className={`navbar-link ${location.pathname === "/reading-history" ? "active" : ""}`}
+              // onClick={closeMenu}
+            >
+              <Clock className="mobile-icon" />
+              <span>Reading History</span>
+            </Link>
           <div className="navbar-user">
             <UserButton
               appearance={{
@@ -335,17 +387,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {selectedBook && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Add to Book List</h2>
-            <button className="close-modal" onClick={() => setSelectedBook(null)}>
-              <X size={18} />
-            </button>
-            {/* Modal content would go here */}
-          </div>
-        </div>
-      )}
+      {selectedBook && <AddToBookListModal book={selectedBook} onClose={() => setSelectedBook(null)} />}
     </nav>
   )
 }

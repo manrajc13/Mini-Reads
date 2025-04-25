@@ -179,6 +179,42 @@ export const BookListProvider = ({ children }) => {
     }
   }
 
+  // Mark a book as read
+  const markBookAsRead = async (listId, bookId) => {
+    try {
+      const response = await axios.patch(`${API_BASE_URL}/booklists/${listId}/books/${bookId}/mark-read`)
+
+      const updatedList = response.data
+
+      const updatedBookLists = bookLists.map((list) => {
+        if (list.id === listId) {
+          return updatedList
+        }
+        return list
+      })
+
+      setBookLists(updatedBookLists)
+
+      // Update selectedBookList if it's the one being modified
+      if (selectedBookList && selectedBookList.id === listId) {
+        setSelectedBookList(updatedList)
+      }
+    } catch (error) {
+      console.error("Error marking book as read:", error)
+    }
+  }
+
+  // Get reading history
+  const getReadingHistory = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/booklists/${userId}/reading-history`)
+      return response.data
+    } catch (error) {
+      console.error("Error fetching reading history:", error)
+      return []
+    }
+  }
+
   // Reset to initial dataset (for testing purposes)
   const resetToInitialData = async () => {
     try {
@@ -209,6 +245,8 @@ export const BookListProvider = ({ children }) => {
           deleteBook: () => {},
           toggleEditBook: () => {},
           updateBookName: () => {},
+          markBookAsRead: () => {},
+          getReadingHistory: () => {},
           resetToInitialData: () => {},
         }}
       >
@@ -229,6 +267,8 @@ export const BookListProvider = ({ children }) => {
         deleteBook,
         toggleEditBook,
         updateBookName,
+        markBookAsRead,
+        getReadingHistory,
         resetToInitialData,
       }}
     >

@@ -1,6 +1,12 @@
+.home-container{
+  min-height: 100vh;
+  width: 100%;
+  padding: 2rem;
+  background-color: var(--light);
+}
 .home {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 0 auto;
   padding: 0 1rem;
 }
 

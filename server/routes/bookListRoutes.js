@@ -67,6 +67,8 @@ router.post("/:id/books", async (req, res) => {
         id: Date.now(),
         name: bookName,
         isEditing: false,
+        isRead: false,
+        readTimestamp: null,
       })
 
       await bookList.save()
@@ -153,6 +155,67 @@ router.patch("/:listId/books/:bookId", async (req, res) => {
   } catch (error) {
     console.error("Error updating book name:", error)
     res.status(500).json({ error: "Failed to update book name" })
+  }
+})
+
+// Mark a book as read
+router.patch("/:listId/books/:bookId/mark-read", async (req, res) => {
+  try {
+    const { listId, bookId } = req.params
+
+    const bookList = await BookList.findOne({ id: Number.parseInt(listId) })
+
+    if (!bookList) {
+      return res.status(404).json({ error: "Book list not found" })
+    }
+
+    const book = bookList.books.find((book) => book.id === Number.parseInt(bookId))
+
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" })
+    }
+
+    book.isRead = true
+    book.readTimestamp = new Date()
+
+    await bookList.save()
+    res.json(bookList)
+  } catch (error) {
+    console.error("Error marking book as read:", error)
+    res.status(500).json({ error: "Failed to mark book as read" })
+  }
+})
+
+// Get reading history for a user
+router.get("/:userId/reading-history", async (req, res) => {
+  try {
+    const { userId } = req.params
+    const bookLists = await BookList.find({ userId })
+
+    // Extract all read books with their list information
+    const readingHistory = []
+
+    bookLists.forEach((list) => {
+      list.books.forEach((book) => {
+        if (book.isRead) {
+          readingHistory.push({
+            bookId: book.id,
+            bookName: book.name,
+            listId: list.id,
+            listTitle: list.title,
+            readTimestamp: book.readTimestamp,
+          })
+        }
+      })
+    })
+
+    // Sort by read timestamp (newest first)
+    readingHistory.sort((a, b) => new Date(b.readTimestamp) - new Date(a.readTimestamp))
+
+    res.json(readingHistory)
+  } catch (error) {
+    console.error("Error fetching reading history:", error)
+    res.status(500).json({ error: "Failed to fetch reading history" })
   }
 })
 

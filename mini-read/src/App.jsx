@@ -13,6 +13,8 @@ import { useState, useEffect } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import axios from "axios"
 import LandingPage from "./components/landing-page"
+import ReadingHistory from "./components/reading-history"
+import ReadingDetails from "./components/reading-details"
 
 const API_BASE_URL = "http://localhost:5000/api"
 
@@ -134,6 +136,8 @@ function App() {
               <Route path="/book/:title" element={<BookDetails />} />
               <Route path="/discover" element={<Discover />} />
               <Route path="/landing" element={<LandingPage/>} />
+              <Route path="/reading-history" element={<ReadingHistory/>} />
+              <Route path="/reading-details/:bookName" element={<ReadingDetails/>} />
             </Routes>
           </Router>
         </BookListProvider>

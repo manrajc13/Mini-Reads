@@ -13,7 +13,7 @@ const Home = () => {
   const [showCreateModal, setShowCreateModal] = useState(false)
 
   return (
-    
+    <div className="home-container">
     <div className="home">
       <header className="home-header">
         <h1>My Book Lists</h1>
@@ -47,6 +47,7 @@ const Home = () => {
       {showCreateModal && <CreateBookListModal onClose={() => setShowCreateModal(false)} />}
 
       {selectedBookList && <BookListDetail bookList={selectedBookList} onClose={() => setSelectedBookList(null)} />}
+    </div>
     </div>
   )
 }

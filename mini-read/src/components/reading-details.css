@@ -1,0 +1,270 @@
+.reading-details-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+  
+  .back-link {
+    margin-bottom: 1.5rem;
+  }
+  
+  .back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+  }
+  
+  .back-link a:hover {
+    color: var(--primary);
+  }
+  
+  .back-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .book-details-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .book-details-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1.5rem;
+  }
+  
+  .book-details-header h1 {
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+  
+  .book-details-header p {
+    color: #666;
+    font-size: 1rem;
+  }
+  
+  .read-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .read-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .detail-icon {
+    background-color: var(--primary-light);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 10px;
+  }
+  
+  .read-detail-item h3 {
+    font-size: 1rem;
+    color: var(--dark);
+    margin-bottom: 0.25rem;
+  }
+  
+  .read-detail-item p {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .reading-progress-section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .reading-progress-section h2 {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .reading-progress-section h2::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 2px;
+  }
+  
+  .progress-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .progress-stat-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+  }
+  
+  .progress-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-stat-icon {
+    background-color: var(--secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 10px;
+  }
+  
+  .progress-stat-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+    color: var(--dark);
+  }
+  
+  .progress-stat-content p {
+    color: #666;
+    font-size: 0.85rem;
+  }
+  
+  .reading-suggestions {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .reading-suggestions h2 {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .reading-suggestions h2::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 2px;
+  }
+  
+  .reading-suggestions > p {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .suggestion-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .suggestion-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: var(--transition);
+    border-left: 3px solid var(--secondary);
+  }
+  
+  .suggestion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .suggestion-card h3 {
+    font-size: 1.1rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+  
+  .suggestion-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .mark-read-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .no-suggestions {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    color: #666;
+  }
+  
+  .book-not-found {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+  }
+  
+  .book-not-found h2 {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 1rem;
+  }
+  
+  .book-not-found p {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .book-details-card,
+    .reading-progress-section,
+    .reading-suggestions {
+      padding: 1.5rem;
+    }
+  
+    .read-details,
+    .progress-stats,
+    .suggestion-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  
