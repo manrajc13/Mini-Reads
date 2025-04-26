@@ -2,16 +2,33 @@
 
 import { useState, useContext, useRef, useEffect } from "react"
 import { BookListContext } from "../context/BookListContext"
-import { Plus, Edit2, Trash2, Save, X, BookOpen, Loader, Check, BookMarked, Search, ChevronRight } from 'lucide-react'
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Save,
+  X,
+  BookOpen,
+  Loader,
+  Check,
+  BookMarked,
+  Search,
+  Library,
+  BookCopy,
+  Clock,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import "./BookListDetail.css"
 
 const BookListDetail = ({ bookList, onClose }) => {
+  // Add this to your existing state declarations at the top
+  const [loadingBookActions, setLoadingBookActions] = useState({});
   const [newBookName, setNewBookName] = useState("")
   const [editBookName, setEditBookName] = useState("")
   const [recommendations, setRecommendations] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [activeTab, setActiveTab] = useState("myBooks")
   const { addBook, deleteBook, toggleEditBook, updateBookName, markBookAsRead } = useContext(BookListContext)
   const modalRef = useRef()
   const navigate = useNavigate()
@@ -23,9 +40,18 @@ const BookListDetail = ({ bookList, onClose }) => {
       }
     }
 
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape") {
+        onClose()
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("keydown", handleEscapeKey)
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("keydown", handleEscapeKey)
     }
   }, [onClose])
 
@@ -37,13 +63,16 @@ const BookListDetail = ({ bookList, onClose }) => {
     }
   }
 
-  const handleUpdateBook = (bookId) => {
+  const handleUpdateBook = async (bookId) => {
     if (editBookName.trim()) {
-      updateBookName(bookList.id, bookId, editBookName)
+      setLoadingBookActions(prev => ({ ...prev, [bookId]: 'edit' }));
+      await updateBookName(bookList.id, bookId, editBookName);
+      setLoadingBookActions(prev => ({ ...prev, [bookId]: null }));
     } else {
-      toggleEditBook(bookList.id, bookId)
+      toggleEditBook(bookList.id, bookId);
     }
-  }
+  };
+  
 
   const formatReadDate = (timestamp) => {
     if (!timestamp) return null
@@ -58,11 +87,11 @@ const BookListDetail = ({ bookList, onClose }) => {
   const getRecommendations = async () => {
     setIsLoading(true)
     setError(null)
+    setActiveTab("recommendations")
 
     try {
       // Extract just the book names for the API request
       const bookNames = bookList.books.map((book) => book.name)
-      // console.log(bookNames)
 
       // Replace with your actual API endpoint
       const response = await fetch("http://127.0.0.1:5000/recommend_books", {
@@ -82,6 +111,7 @@ const BookListDetail = ({ bookList, onClose }) => {
     } catch (err) {
       console.error("Error fetching recommendations:", err)
       setError("Failed to get recommendations. Please try again later.")
+      simulateApiCall() // For demo purposes
     } finally {
       setIsLoading(false)
     }
@@ -128,29 +158,43 @@ const BookListDetail = ({ bookList, onClose }) => {
           },
         ],
       }
-      // const bookNames = bookList.books.map(book => book.name)
-      // console.log(bookNames)
       setRecommendations(mockResponse.recommendations)
       setIsLoading(false)
     }, 1500)
   }
-
-  // In BookListDetail.jsx, modify the handleBookClick function
-
-
-
+  const handleDeleteBook = async (bookId) => {
+    setLoadingBookActions(prev => ({ ...prev, [bookId]: 'delete' }));
+    await deleteBook(bookList.id, bookId);
+    setLoadingBookActions(prev => ({ ...prev, [bookId]: null }));
+  };
+  
+  const handleMarkAsRead = async (bookId) => {
+    setLoadingBookActions(prev => ({ ...prev, [bookId]: 'read' }));
+    await markBookAsRead(bookList.id, bookId);
+    setLoadingBookActions(prev => ({ ...prev, [bookId]: null }));
+  };
   const handleBookClick = (book) => {
     const bookTitle = book.title || book.name
     navigate(`/book/${encodeURIComponent(bookTitle)}`)
     onClose()
   }
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    if (tab === "recommendations" && !recommendations && !isLoading) {
+      getRecommendations()
+    }
+  }
+
   return (
     <div className="book-modal-overlay">
       <div className="book-modal" ref={modalRef}>
         <header className="book-modal-header">
-          <h2>{bookList.title}</h2>
-          <button className="book-close-btn" onClick={onClose}>
+          <div className="book-modal-title">
+            <h2>{bookList.title}</h2>
+            <span className="book-count">{bookList.books.length} books</span>
+          </div>
+          <button className="book-close-btn" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </header>
@@ -165,27 +209,44 @@ const BookListDetail = ({ bookList, onClose }) => {
                 onChange={(e) => setNewBookName(e.target.value)}
                 placeholder="Add a book to your collection..."
                 className="book-add-input"
+                aria-label="Book title"
               />
             </div>
-            <button type="submit" className="book-btn book-btn-primary" disabled={!newBookName.trim()}>
+            <button
+              type="submit"
+              className="book-btn book-btn-primary"
+              disabled={!newBookName.trim()}
+              aria-label="Add book"
+            >
               <Plus size={16} />
               <span>Add</span>
             </button>
           </form>
 
           <div className="book-tabs">
-            <button className="book-tab book-tab-active">My Books ({bookList.books.length})</button>
-            <button className="book-tab" onClick={getRecommendations} disabled={isLoading || recommendations}>
-              Recommendations
+            <button
+              className={`book-tab ${activeTab === "myBooks" ? "book-tab-active" : ""}`}
+              onClick={() => handleTabChange("myBooks")}
+            >
+              <Library size={16} className="book-tab-icon" />
+              <span>My Books</span>
+            </button>
+            <button
+              className={`book-tab ${activeTab === "recommendations" ? "book-tab-active" : ""}`}
+              onClick={() => handleTabChange("recommendations")}
+              disabled={isLoading}
+            >
+              <BookCopy size={16} className="book-tab-icon" />
+              <span>Recommendations</span>
             </button>
           </div>
 
-          {!recommendations && (
+          {activeTab === "myBooks" && (
             <div className="book-list-container">
               {bookList.books.length > 0 ? (
                 <ul className="book-list">
                   {bookList.books.map((book) => (
-                    <li key={book.id} className={`book-item ${book.isRead ? 'book-read' : ''}`}>
+                    <li key={book.id} className={`book-item ${book.isRead ? "book-read" : ""}`}>
                       {book.isEditing ? (
                         <div className="book-edit-form">
                           <input
@@ -194,19 +255,22 @@ const BookListDetail = ({ bookList, onClose }) => {
                             onChange={(e) => setEditBookName(e.target.value)}
                             autoFocus
                             className="book-edit-input"
+                            aria-label="Edit book title"
                           />
                           <div className="book-edit-actions">
-                            <button 
-                              className="book-btn book-btn-icon book-btn-success" 
+                            <button
+                              className="book-btn book-btn-icon book-btn-success"
                               onClick={() => handleUpdateBook(book.id)}
                               title="Save"
+                              aria-label="Save changes"
                             >
                               <Save size={16} />
                             </button>
-                            <button 
-                              className="book-btn book-btn-icon book-btn-neutral" 
+                            <button
+                              className="book-btn book-btn-icon book-btn-neutral"
                               onClick={() => toggleEditBook(bookList.id, book.id)}
                               title="Cancel"
+                              aria-label="Cancel editing"
                             >
                               <X size={16} />
                             </button>
@@ -221,36 +285,55 @@ const BookListDetail = ({ bookList, onClose }) => {
                             </div>
                             {book.isRead && (
                               <span className="book-read-date">
+                                <Clock size={12} className="book-date-icon" />
                                 Read on {formatReadDate(book.readTimestamp)}
                               </span>
                             )}
                           </div>
                           <div className="book-actions">
                             {!book.isRead && (
-                              <button 
-                                className="book-btn book-btn-icon book-btn-success" 
-                                onClick={() => markBookAsRead(bookList.id, book.id)}
+                              <button
+                                className="book-btn book-btn-icon book-btn-success"
+                                onClick={() => handleMarkAsRead(book.id)}
                                 title="Mark as read"
+                                aria-label="Mark as read"
+                                disabled={loadingBookActions[book.id] === 'read'}
                               >
-                                <BookMarked size={16} />
+                                {loadingBookActions[book.id] === 'read' ? (
+                                  <Loader size={16} className="book-spinner" />
+                                ) : (
+                                  <BookMarked size={16} />
+                                )}
                               </button>
                             )}
-                            <button 
-                              className="book-btn book-btn-icon book-btn-neutral" 
+                            <button
+                              className="book-btn book-btn-icon book-btn-neutral"
                               onClick={() => {
-                                setEditBookName(book.name)
-                                toggleEditBook(bookList.id, book.id)
+                                setEditBookName(book.name);
+                                toggleEditBook(bookList.id, book.id);
                               }}
                               title="Edit"
+                              aria-label="Edit book"
+                              disabled={loadingBookActions[book.id] === 'edit'}
                             >
-                              <Edit2 size={16} />
+                              {loadingBookActions[book.id] === 'edit' ? (
+                                <Loader size={16} className="book-spinner" />
+                              ) : (
+                                <Edit2 size={16} />
+                              )}
                             </button>
-                            <button 
-                              className="book-btn book-btn-icon book-btn-danger" 
-                              onClick={() => deleteBook(bookList.id, book.id)}
+                            <button
+                              className="book-btn book-btn-icon book-btn-danger"
+                              onClick={() => handleDeleteBook(book.id)}
                               title="Delete"
+                              aria-label="Delete book"
+                              disabled={loadingBookActions[book.id] === 'delete'}
                             >
-                              <Trash2 size={16} />
+                              {loadingBookActions[book.id] === 'delete' ? (
+                                <Loader size={16} className="book-spinner" />
+                              ) : (
+                                <Trash2 size={16} />
+                              )}
                             </button>
                           </div>
                         </>
@@ -260,7 +343,9 @@ const BookListDetail = ({ bookList, onClose }) => {
                 </ul>
               ) : (
                 <div className="book-empty-state">
-                  <BookOpen size={32} />
+                  <div className="book-empty-icon">
+                    <BookOpen size={32} />
+                  </div>
                   <p>Your collection is empty</p>
                   <span>Add your first book using the form above</span>
                 </div>
@@ -270,7 +355,9 @@ const BookListDetail = ({ bookList, onClose }) => {
 
           {isLoading && (
             <div className="book-loading">
-              <Loader size={24} className="book-spinner" />
+              <div className="book-loading-spinner">
+                <Loader size={24} className="book-spinner" />
+              </div>
               <p>Finding books you might enjoy...</p>
             </div>
           )}
@@ -284,35 +371,29 @@ const BookListDetail = ({ bookList, onClose }) => {
             </div>
           )}
 
-          {recommendations && (
+          {activeTab === "recommendations" && recommendations && (
             <div className="book-recommendations">
               <div className="book-recommendations-header">
                 <h3>Recommended Books</h3>
-                <button 
-                  className="book-btn book-btn-text" 
-                  onClick={() => setRecommendations(null)}
-                >
-                  Back to my books
-                </button>
+                <p className="book-recommendations-subtitle">Based on your reading preferences</p>
               </div>
-              
+
               <ul className="book-recommendations-list">
                 {recommendations.map((book, index) => (
                   <li key={index} className="book-recommendation-item" onClick={() => handleBookClick(book)}>
                     <div className="book-recommendation-content">
                       <h4>{book.title}</h4>
                       <p className="book-recommendation-author">by {book.author}</p>
-                      <p className="book-recommendation-description">
-                        {book.description.replace(/^[0-9]{13}\s/, "")}
-                      </p>
+                      <p className="book-recommendation-description">{book.description.replace(/^[0-9]{13}\s/, "")}</p>
                     </div>
                     <button
                       className="book-btn book-btn-circle"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        addBook(bookList.id, `${book.title} by ${book.author}`);
+                        e.stopPropagation()
+                        addBook(bookList.id, `${book.title} by ${book.author}`)
                       }}
                       title="Add to collection"
+                      aria-label="Add to collection"
                     >
                       <Plus size={16} />
                     </button>
